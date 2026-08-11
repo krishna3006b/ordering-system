@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     }
 
     // 2. Dispatch IncidentPilot AI Agent API
-    const agentBackendUrl = process.env.AGENT_BACKEND_URL || 'http://localhost:8000/api/v1/alerts';
+    const agentBackendUrl = process.env.AGENT_BACKEND_URL || 'https://59e54fd99fcf37.lhr.life/api/v1/alerts';
     try {
       await fetch(agentBackendUrl, {
         method: 'POST',
