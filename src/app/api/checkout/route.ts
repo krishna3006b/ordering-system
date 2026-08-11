@@ -33,22 +33,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2. Dispatch IncidentPilot AI Agent API
-    const agentBackendUrl = process.env.AGENT_BACKEND_URL || 'https://59e54fd99fcf37.lhr.life/api/v1/alerts';
-    try {
-      await fetch(agentBackendUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service_name: 'payment-service',
-          summary: errorMessage,
-          severity: 'P1'
-        })
-      });
-    } catch (e) {
-      console.error('Failed to ping IncidentPilot Agent:', e);
-    }
-
     return NextResponse.json(
       { status: 'ERROR', error: errorMessage },
       { status: 500 }
