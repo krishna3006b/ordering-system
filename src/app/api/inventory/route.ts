@@ -4,8 +4,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // 🚨 BUG LOCATION: Direct property access on body.product without null check
-    const stock = body.product.stock_quantity;
+    // Use safe optional chaining and fallback defaults
+    const stock = body?.product?.stock_quantity || 0;
 
     return NextResponse.json({
       status: 'SUCCESS',
