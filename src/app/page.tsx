@@ -128,7 +128,7 @@ export default function CheckoutPage() {
                 className="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 font-medium py-2.5 px-3 rounded-xl flex items-center gap-2 transition disabled:opacity-50 text-xs text-left col-span-1 md:col-span-2"
               >
                 <AlertTriangle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                🔥 6. Multi-File System Bug (Order -> Payment -> Tax Lib)
+                🔥 6. Multi-File System Bug (Order → Payment → Tax Lib)
               </button>
             </div>
           </div>
