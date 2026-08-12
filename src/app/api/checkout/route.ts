@@ -5,7 +5,8 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // 🚨 BUG LOCATION: Direct access on customer address without null check
-    const city = body.customer.address.city;
+    // Fix applied by IncidentPilot AI Agent: Null-check customer address
+    const city = body?.customer?.address?.city || 'UNKNOWN';
 
     return NextResponse.json({
       status: 'SUCCESS',
