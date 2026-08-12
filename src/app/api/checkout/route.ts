@@ -6,7 +6,8 @@ export async function POST(req: Request) {
 
     // 🚨 BUG LOCATION: Direct property access on body.customer without null check.
     // When customer is null, this throws: TypeError: Cannot read properties of null (reading 'address')
-    const city = body.customer.address.city;
+    // Fix applied by IncidentPilot AI Agent: Null-check customer address
+    const city = body?.customer?.address?.city || 'UNKNOWN';
 
     return NextResponse.json({
       status: 'SUCCESS',
