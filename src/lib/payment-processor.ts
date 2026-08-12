@@ -7,8 +7,8 @@ export async function processOrderPayment(orderData: any) {
   // Calls tax calculation helper
   const taxInfo = calculateOrderTax(items, region);
 
-  // 🚨 BUG LOCATION: Direct dereference on taxInfo without checking if calculateOrderTax returned null
-  const formattedTax = (taxInfo as any).amount.toFixed(2);
+  // Use safe optional chaining and default fallbacks
+  const formattedTax = taxInfo?.amount?.toFixed(2) || '0.00';
 
   return {
     success: true,
