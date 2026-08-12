@@ -112,6 +112,15 @@ export default function CheckoutPage() {
                 <User className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                 4. Profile Destructure Bug
               </button>
+
+              <button
+                onClick={() => triggerApi('/api/shipping/calculate', { address: null })}
+                disabled={loading}
+                className="bg-blue-950/80 hover:bg-blue-900 text-blue-300 border border-blue-800 font-medium py-2.5 px-3 rounded-xl flex items-center gap-2 transition disabled:opacity-50 text-xs text-left col-span-1 md:col-span-2"
+              >
+                <AlertTriangle className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                5. Shipping Rate Bug (NEW: Address.country null)
+              </button>
             </div>
           </div>
         </div>
