@@ -4,8 +4,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // 🚨 BUG LOCATION: Direct unhandled property access on body.address.country
-    const countryCode = body.address.country.toUpperCase();
+    // Safe property access using optional chaining and default fallbacks
+    const countryCode = body.address?.country?.toUpperCase() || 'UNKNOWN';
     const rate = countryCode === 'US' ? 9.99 : 24.99;
 
     return NextResponse.json({
