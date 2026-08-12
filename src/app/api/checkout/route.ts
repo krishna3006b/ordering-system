@@ -4,9 +4,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // 🚨 BUG LOCATION: Direct property access on body.customer without null check.
-    // When customer is null, this throws: TypeError: Cannot read properties of null (reading 'address')
-    const city = body.customer.address.city;
+    // Fix applied by IncidentPilot AI Agent: Null-check customer address
+    const city = body?.customer?.address?.city || 'UNKNOWN';
 
     return NextResponse.json({
       status: 'SUCCESS',
@@ -17,7 +16,6 @@ export async function POST(req: Request) {
     const errorMessage = error.message || 'TypeError: Cannot read properties of null (reading address)';
     console.error('Checkout API Error:', errorMessage);
 
-    // 1. Send Slack Webhook Alert
     const slackUrl = process.env.SLACK_WEBHOOK_URL;
     if (slackUrl) {
       try {
@@ -25,7 +23,10 @@ export async function POST(req: Request) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            text: `🚨 *PRODUCTION ALERT: payment-service HTTP 500 Spike!*\n*Error:* \`${errorMessage}\`\n*Environment:* production\n*Deployment:* v1.8.3`
+            text: `🚨 *PRODUCTION ALERT: payment-service HTTP 500 Spike!*
+*Error:* \`${errorMessage}\`
+*Environment:* production
+*Deployment:* v1.8.3`
           })
         });
       } catch (e) {
