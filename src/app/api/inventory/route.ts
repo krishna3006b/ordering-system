@@ -5,7 +5,6 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // 🚨 BUG LOCATION: Direct property access on body.product without null check
-    // When product is null/undefined, throws TypeError: Cannot read properties of null (reading 'stock_quantity')
     const stock = body.product.stock_quantity;
 
     return NextResponse.json({
@@ -15,6 +14,7 @@ export async function POST(req: Request) {
     });
   } catch (error: any) {
     const errorMessage = error.message || "TypeError: Cannot read properties of null (reading 'stock_quantity')";
+    const stackTrace = error.stack || "TypeError: Cannot read properties of null (reading 'stock_quantity') at POST (src/app/api/inventory/route.ts:8:24)";
     console.error('Inventory API Error:', errorMessage);
 
     const slackUrl = process.env.SLACK_WEBHOOK_URL;
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            text: `🚨 *PRODUCTION ALERT: ordering-system HTTP 500 Spike!*\n*Error:* \`${errorMessage}\`\n*Environment:* production\n*Deployment:* v1.8.3`
+            text: `🚨 *PRODUCTION ALERT: ordering-system HTTP 500 Spike!*\n*Error:* \`${errorMessage}\`\n*Endpoint:* \`POST /api/inventory\`\n*Stack:* \`${stackTrace.split('\n')[0]} at POST (src/app/api/inventory/route.ts:8)\`\n*Environment:* production\n*Deployment:* v1.8.3`
           })
         });
       } catch (e) {

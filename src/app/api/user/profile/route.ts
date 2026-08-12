@@ -5,7 +5,6 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // 🚨 BUG LOCATION: Unhandled destructuring on body.user
-    // When user is null, throws TypeError: Cannot destructure property 'email' of 'body.user' as it is null.
     const { email, role } = body.user;
 
     return NextResponse.json({
@@ -15,6 +14,7 @@ export async function POST(req: Request) {
     });
   } catch (error: any) {
     const errorMessage = error.message || "TypeError: Cannot destructure property 'email' of 'body.user' as it is null";
+    const stackTrace = error.stack || "TypeError: Cannot destructure property 'email' of 'body.user' as it is null at POST (src/app/api/user/profile/route.ts:8:23)";
     console.error('User Profile API Error:', errorMessage);
 
     const slackUrl = process.env.SLACK_WEBHOOK_URL;
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            text: `🚨 *PRODUCTION ALERT: ordering-system HTTP 500 Spike!*\n*Error:* \`${errorMessage}\`\n*Environment:* production\n*Deployment:* v1.8.3`
+            text: `🚨 *PRODUCTION ALERT: ordering-system HTTP 500 Spike!*\n*Error:* \`${errorMessage}\`\n*Endpoint:* \`POST /api/user/profile\`\n*Stack:* \`${stackTrace.split('\n')[0]} at POST (src/app/api/user/profile/route.ts:8)\`\n*Environment:* production\n*Deployment:* v1.8.3`
           })
         });
       } catch (e) {
