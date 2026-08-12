@@ -1,11 +1,12 @@
+// Primary Target File: src/app/api/discount/route.ts
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // 🚨 BUG LOCATION: Direct access on body.items array without null/length check
-    const firstItemPrice = body.items[0].price;
+    // Safe access on body.items array with null/length check and default fallback
+    const firstItemPrice = body.items?.[0]?.price || 0;
     const discount = firstItemPrice * 0.15;
 
     return NextResponse.json({
