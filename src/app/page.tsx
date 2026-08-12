@@ -116,10 +116,19 @@ export default function CheckoutPage() {
               <button
                 onClick={() => triggerApi('/api/shipping/calculate', { address: null })}
                 disabled={loading}
-                className="bg-blue-950/80 hover:bg-blue-900 text-blue-300 border border-blue-800 font-medium py-2.5 px-3 rounded-xl flex items-center gap-2 transition disabled:opacity-50 text-xs text-left col-span-1 md:col-span-2"
+                className="bg-blue-950/80 hover:bg-blue-900 text-blue-300 border border-blue-800 font-medium py-2.5 px-3 rounded-xl flex items-center gap-2 transition disabled:opacity-50 text-xs text-left"
               >
                 <AlertTriangle className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                5. Shipping Rate Bug (NEW: Address.country null)
+                5. Shipping Rate Bug
+              </button>
+
+              <button
+                onClick={() => triggerApi('/api/order/process', { items: [{ price: 100 }], region: null })}
+                disabled={loading}
+                className="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 font-medium py-2.5 px-3 rounded-xl flex items-center gap-2 transition disabled:opacity-50 text-xs text-left col-span-1 md:col-span-2"
+              >
+                <AlertTriangle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                🔥 6. Multi-File System Bug (Order -> Payment -> Tax Lib)
               </button>
             </div>
           </div>
