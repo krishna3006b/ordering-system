@@ -4,8 +4,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // 🚨 BUG LOCATION: Direct access on body.items array without null/length check
-    const firstItemPrice = body.items[0].price;
+    // Safe optional chaining fallback applied by AI Agent
+    const firstItemPrice = body?.items?.[0]?.price || 0;
     const discount = firstItemPrice * 0.15;
 
     return NextResponse.json({
