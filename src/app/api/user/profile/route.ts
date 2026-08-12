@@ -1,11 +1,14 @@
+// Primary Target File: src/app/api/user/profile/route.ts
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // 🚨 BUG LOCATION: Unhandled destructuring on body.user
-    const { email, role } = body.user;
+    // Safe optional chaining and default fallbacks
+    const { user } = body;
+    const email = user?.email || null;
+    const role = user?.role || null;
 
     return NextResponse.json({
       status: 'SUCCESS',
