@@ -4,20 +4,19 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // 🚨 BUG LOCATION: Direct property access on body.customer without null check.
-    // When customer is null, this throws: TypeError: Cannot read properties of null (reading 'address')
-    const city = body.customer.address.city;
+    // 🚨 BUG LOCATION: Direct property access on body.product without null check
+    // When product is null/undefined, throws TypeError: Cannot read properties of null (reading 'stock_quantity')
+    const stock = body.product.stock_quantity;
 
     return NextResponse.json({
       status: 'SUCCESS',
-      transaction_id: 'tx_' + Math.floor(Math.random() * 1000000),
-      city: city
+      in_stock: stock > 0,
+      quantity: stock
     });
   } catch (error: any) {
-    const errorMessage = error.message || 'TypeError: Cannot read properties of null (reading address)';
-    console.error('Checkout API Error:', errorMessage);
+    const errorMessage = error.message || "TypeError: Cannot read properties of null (reading 'stock_quantity')";
+    console.error('Inventory API Error:', errorMessage);
 
-    // 1. Send Slack Webhook Alert
     const slackUrl = process.env.SLACK_WEBHOOK_URL;
     if (slackUrl) {
       try {
@@ -25,7 +24,7 @@ export async function POST(req: Request) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            text: `🚨 *PRODUCTION ALERT: payment-service HTTP 500 Spike!*\n*Error:* \`${errorMessage}\`\n*Environment:* production\n*Deployment:* v1.8.3`
+            text: `🚨 *PRODUCTION ALERT: ordering-system HTTP 500 Spike!*\n*Error:* \`${errorMessage}\`\n*Environment:* production\n*Deployment:* v1.8.3`
           })
         });
       } catch (e) {

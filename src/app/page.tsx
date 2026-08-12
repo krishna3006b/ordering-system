@@ -1,22 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShoppingBag, AlertTriangle, CheckCircle, ShieldAlert, CreditCard } from 'lucide-react';
+import { ShoppingBag, AlertTriangle, CheckCircle, ShieldAlert, CreditCard, Tag, Package, User } from 'lucide-react';
 
 export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
 
-  const handleCheckout = async (simulateBug: boolean) => {
+  const triggerApi = async (endpoint: string, payload: any) => {
     setLoading(true);
     setResult(null);
 
-    const payload = simulateBug
-      ? { customer: null } // 🚨 Triggers Bug
-      : { customer: { address: { city: 'San Francisco' } } }; // Normal flow
-
     try {
-      const res = await fetch('/api/checkout', {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -68,7 +64,7 @@ export default function CheckoutPage() {
         {/* Action Buttons */}
         <div className="space-y-3 pt-2">
           <button
-            onClick={() => handleCheckout(false)}
+            onClick={() => triggerApi('/api/checkout', { customer: { address: { city: 'San Francisco' } } })}
             disabled={loading}
             className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition disabled:opacity-50"
           >
@@ -76,14 +72,48 @@ export default function CheckoutPage() {
             {loading ? 'Processing...' : 'Pay $165 (Normal Flow)'}
           </button>
 
-          <button
-            onClick={() => handleCheckout(true)}
-            disabled={loading}
-            className="w-full bg-red-950/80 hover:bg-red-900 text-red-300 border border-red-800 font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition disabled:opacity-50 text-sm"
-          >
-            <AlertTriangle className="w-4 h-4 text-red-400" />
-            Simulate Guest Checkout (Triggers Bug & Slack Alert)
-          </button>
+          <div className="pt-2">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+              🚨 AI Agent Test Bug Scenarios
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <button
+                onClick={() => triggerApi('/api/checkout', { customer: null })}
+                disabled={loading}
+                className="bg-red-950/80 hover:bg-red-900 text-red-300 border border-red-800 font-medium py-2.5 px-3 rounded-xl flex items-center gap-2 transition disabled:opacity-50 text-xs text-left"
+              >
+                <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                1. Guest Checkout Bug
+              </button>
+
+              <button
+                onClick={() => triggerApi('/api/discount', { items: [] })}
+                disabled={loading}
+                className="bg-amber-950/80 hover:bg-amber-900 text-amber-300 border border-amber-800 font-medium py-2.5 px-3 rounded-xl flex items-center gap-2 transition disabled:opacity-50 text-xs text-left"
+              >
+                <Tag className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                2. Discount Calc Bug
+              </button>
+
+              <button
+                onClick={() => triggerApi('/api/inventory', { product: null })}
+                disabled={loading}
+                className="bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 font-medium py-2.5 px-3 rounded-xl flex items-center gap-2 transition disabled:opacity-50 text-xs text-left"
+              >
+                <Package className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                3. Stock Check Bug
+              </button>
+
+              <button
+                onClick={() => triggerApi('/api/user/profile', { user: null })}
+                disabled={loading}
+                className="bg-purple-950/80 hover:bg-purple-900 text-purple-300 border border-purple-800 font-medium py-2.5 px-3 rounded-xl flex items-center gap-2 transition disabled:opacity-50 text-xs text-left"
+              >
+                <User className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                4. Profile Destructure Bug
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Status Result Display */}
@@ -99,7 +129,7 @@ export default function CheckoutPage() {
               {result.status === 200 ? (
                 <>
                   <CheckCircle className="w-4 h-4 text-emerald-400" />
-                  HTTP 200 OK — Order Placed!
+                  HTTP 200 OK — Success!
                 </>
               ) : (
                 <>

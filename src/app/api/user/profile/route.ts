@@ -4,20 +4,19 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // 🚨 BUG LOCATION: Direct property access on body.customer without null check.
-    // When customer is null, this throws: TypeError: Cannot read properties of null (reading 'address')
-    const city = body.customer.address.city;
+    // 🚨 BUG LOCATION: Unhandled destructuring on body.user
+    // When user is null, throws TypeError: Cannot destructure property 'email' of 'body.user' as it is null.
+    const { email, role } = body.user;
 
     return NextResponse.json({
       status: 'SUCCESS',
-      transaction_id: 'tx_' + Math.floor(Math.random() * 1000000),
-      city: city
+      email,
+      role
     });
   } catch (error: any) {
-    const errorMessage = error.message || 'TypeError: Cannot read properties of null (reading address)';
-    console.error('Checkout API Error:', errorMessage);
+    const errorMessage = error.message || "TypeError: Cannot destructure property 'email' of 'body.user' as it is null";
+    console.error('User Profile API Error:', errorMessage);
 
-    // 1. Send Slack Webhook Alert
     const slackUrl = process.env.SLACK_WEBHOOK_URL;
     if (slackUrl) {
       try {
@@ -25,7 +24,7 @@ export async function POST(req: Request) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            text: `🚨 *PRODUCTION ALERT: payment-service HTTP 500 Spike!*\n*Error:* \`${errorMessage}\`\n*Environment:* production\n*Deployment:* v1.8.3`
+            text: `🚨 *PRODUCTION ALERT: ordering-system HTTP 500 Spike!*\n*Error:* \`${errorMessage}\`\n*Environment:* production\n*Deployment:* v1.8.3`
           })
         });
       } catch (e) {
