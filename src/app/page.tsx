@@ -207,7 +207,7 @@ export default function CheckoutPage() {
             <div className="text-red-400 flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5" />
-                <span>Error: Internal Server Error (500) triggered in <span className="text-zinc-300 bg-zinc-800 px-1 py-0.5 rounded">{result.endpoint}</span></span>
+                <span>Error: HTTP {result.status} triggered in <span className="text-zinc-300 bg-zinc-800 px-1 py-0.5 rounded">{result.endpoint}</span></span>
               </div>
               <pre className="text-red-200/70 text-xs mt-2">{JSON.stringify(result.data, null, 2)}</pre>
             </div>
