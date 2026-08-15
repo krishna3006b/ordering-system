@@ -4,11 +4,11 @@ export async function processOrderPayment(orderData: any) {
   const items = orderData?.items || [];
   const region = orderData?.region;
 
-  // Calls tax calculation helper
   const taxInfo = calculateOrderTax(items, region);
 
-  // Use safe optional chaining and default fallbacks
-  const formattedTax = taxInfo?.amount?.toFixed(2) || '0.00';
+  // Regression: the tax service can legitimately return null when region is missing,
+  // but this consumer assumes the result is always present.
+  const formattedTax = taxInfo.amount.toFixed(2);
 
   return {
     success: true,
