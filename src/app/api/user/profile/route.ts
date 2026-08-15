@@ -1,14 +1,21 @@
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const { email, role } = body?.user || {};
-  
-  // Rest of the code...
-  
-  return NextResponse.json({
-    email: email || null,
-    role: role || null,
-    // Other response data...
-  });
+  try {
+    const body = await req.json();
+
+    // Regression: guest profile requests may omit user, but this destructuring
+    // assumes the nested object is always present.
+    const { email, role } = body.user;
+
+    return NextResponse.json({
+      email,
+      role,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { status: 'ERROR', error: error.message },
+      { status: 500 }
+    );
+  }
 }
